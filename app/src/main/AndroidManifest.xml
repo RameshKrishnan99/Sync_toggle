@@ -81,7 +81,7 @@
             </intent-filter>
         </receiver>
         -->
-        <activity android:name=".TestActivity" />
+        <!--<activity android:name=".TestActivity" />-->
 
         <!-- <service -->
         <!-- android:name=".GeofenceTransitionsIntentService" -->
@@ -89,9 +89,7 @@
 
 
         <!-- <activity android:name=".Geofence_Activity"></activity> -->
-        <activity android:name=".ServerActivity"></activity>
-        <service
-            android:name=".TTS"></service>
+        <!--<activity android:name=".ServerActivity"></activity>-->
     </application>
 
 </manifest>
