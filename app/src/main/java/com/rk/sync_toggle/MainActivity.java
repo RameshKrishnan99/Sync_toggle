@@ -1,137 +1,138 @@
 package com.rk.sync_toggle;
 
 import android.Manifest;
-import android.annotation.TargetApi;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
-import android.net.wifi.WifiManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.os.Vibrator;
 import android.provider.Settings;
-import android.provider.Telephony;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.Toast;
+import android.widget.TextView;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+import com.rk.sync_toggle.service.model.UserDto;
+import com.rk.sync_toggle.view_model.MainViewModel;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button btn_hide;
+    private Button btnStart;
+    private TextView infoText;
     private NetworkChangeReceiver net;
     public Test_services testService;
     public boolean isBound = false;
-    private Button btn_cancel;
+    private MainViewModel viewModel;
+    private Button btnStop;
+    public void setMobileDataState(boolean mobileDataEnabled)
+    {
+        try{
+            Settings.Global.putInt(getContentResolver(),
+                    Settings.Global.AIRPLANE_MODE_ON,  1);
+           /* boolean isEnabled = android.provider.Settings.System.getInt(
+                    getContentResolver(),
+                    android.provider.Settings.System.AIRPLANE_MODE_ON, 0) == 1;
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-//        unregisterReceiver(net);
+            // toggle airplane mode
+            android.provider.Settings.System.putInt(
+                    getContentResolver(),
+                    android.provider.Settings.System.AIRPLANE_MODE_ON, isEnabled ? 0 : 1);
+
+            // Post an intent to reload
+            Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+            intent.putExtra("state", !isEnabled);
+            sendBroadcast(intent);*/
+
+//            ConnectivityManager dataManager;
+//            dataManager  = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+//            Method dataMtd = dataManager.getClass().getDeclaredMethod("setMobileDataEnabled", boolean.class);
+//            dataMtd.setAccessible(true);
+//            dataMtd.invoke(dataManager, mobileDataEnabled);
+        }catch(Exception ex){
+            //Error Code Write Here
+            Log.e("setMobileDataState",ex.toString());
+        }
     }
-
-    private void unlockScreen() {
-        Window window = this.getWindow();
-        window.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
-        window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-        window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
-    }
-
+    public String token;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        unlockScreen();
         setContentView(R.layout.activity_main);
-//        time_receiver();
-//        checkIs_sms_default_app();
+        viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
 
-//            Toast.makeText(this, "Kindly allow permission", Toast.LENGTH_SHORT).show();
-//        Alarmactivater.scheduleAlarm(this, 1000 * 60 * 60);
-//        Intent intent = new Intent(this, Test_services.class);
-//        startService(intent);
-//        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-
-        btn_hide = (Button) findViewById(R.id.btn_hide);
-        btn_hide.setVisibility(View.GONE);
-        btn_hide.setText("Activate");
-        btn_hide.setOnClickListener(new View.OnClickListener() {
+        btnStart = (Button) findViewById(R.id.btn_hide);
+        infoText = (TextView) findViewById(R.id.info_text);
+        btnStart.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
-//                getClientList();
-                /*String msg = "wifi_on";
-                Constants.getInstance(MainActivity.this).sendSMS(MainActivity.this, Constants.getInstance(MainActivity.this).phoneNo, msg);*/
-//                Constants.getInstance(MainActivity.this).deleteSMS("");
-//                Constants.getInstance(MainActivity.this).request_location_update(MainActivity.this);
-//                finish();
-//                hide_app();
-//                start_play();
-//                finish();
-//                vibrate();
-//                if (isBound)
-//                    testService.make_sound();
-
+                if (checkANDgetpermission() == 0) {
+                    hideStartButton();
+                    Alarmactivater.scheduleAlarm(MainActivity.this, Constants._interval_time);
+                }
+//                setMobileDataState(true);
             }
         });
-        btn_cancel = (Button) findViewById(R.id.btn_cancel);
-//        btn_cancel.setVisibility(View.GONE);
-        btn_cancel.setOnClickListener(new View.OnClickListener() {
+        btnStop = (Button) findViewById(R.id.btn_cancel);
+
+        btnStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-
+               hideStopButton();
+                Alarmactivater.cancelAlarm(MainActivity.this);
+                Intent intent = new Intent(MainActivity.this,Network_service.class);
+                stopService(intent);
             }
         });
-
-        if (checkANDgetpermission() == 0) {
-//            Constants.getInstance(MainActivity.this).get_WriteSettingPermission(this);
-            Alarmactivater.scheduleAlarm(MainActivity.this, Constants._interval_time);
-            Log.e("hass all permission", "hass all permission");
-//            Alarmactivater.scheduleAlarm(MainActivity.this, Constants._interval_time);
-//            startActivity(new Intent(this,TestActivity.class));
+        if (Constants.getInstance(this).isMyServiceRunning(Network_service.class)){
+            hideStartButton();
+        } else {
+            hideStopButton();
         }
 
-
-
-//        Constants.getInstance(this).switch_on_hotspot(true);
-//        btn_cancel.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                unbindService(serviceConnection);
-//                Intent intent = new Intent(MainActivity.this,Network_service.class);
-//                stopService(intent);
-//            }
-//        });
-    }
-
-    private void time_receiver() {
-        BroadcastReceiver tickReceiver = new BroadcastReceiver() {
+        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
             @Override
-            public void onReceive(Context context, Intent intent) {
-                if (intent.getAction().compareTo(Intent.ACTION_TIME_TICK) == 0) {
-                    Log.e("Karl", "tick tock tick tock...");
+            public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                if (!task.isSuccessful()) {
+                    token = task.getException().getMessage();
+                    Log.w("FCM TOKEN Failed", task.getException());
+                } else {
+                    token = task.getResult().getToken();
+                    Log.i("FCM TOKEN", token);
+                    viewModel.getCreateUserLiveData(token).observe(MainActivity.this, new Observer<UserDto>() {
+                        @Override
+                        public void onChanged(UserDto userDto) {
+                            if(userDto!=null){
+                                infoText.setText(userDto.getResponseData());
+                            }
+                        }
+                    });
                 }
             }
-        };
-        registerReceiver(tickReceiver, new IntentFilter(Intent.ACTION_TIME_TICK)); // register the broadcast receiver to receive TIME_TICK
+        });
+    }
+
+    private void hideStopButton() {
+        btnStart.setVisibility(View.VISIBLE);
+        btnStop.setVisibility(View.GONE);
+    }
+
+    private void hideStartButton() {
+        btnStart.setVisibility(View.GONE);
+        btnStop.setVisibility(View.VISIBLE);
     }
 
 
@@ -161,6 +162,7 @@ public class MainActivity extends AppCompatActivity {
                                            String permissions[], int[] grantResults) {
 
         // If request is cancelled, the result arrays are empty.
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (grantResults.length > 0) {
             boolean permission_granted = true;
             for (int i = 0; i < grantResults.length; i++) {
@@ -187,122 +189,4 @@ public class MainActivity extends AppCompatActivity {
         Alarmactivater.scheduleAlarm(MainActivity.this, Constants._interval_time);
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-//        if (isBound)
-//            unbindService(serviceConnection);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-    }
-
-    private void checkIs_sms_default_app() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-            Log.e("sms package", Telephony.Sms.getDefaultSmsPackage(this));
-            if (!Telephony.Sms.getDefaultSmsPackage(this).equals("com.rk.sync_toggle")) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setMessage("This app is not set as your default messaging app. Do you want to set it as default?")
-                        .setCancelable(false)
-                        .setTitle("Alert!")
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @TargetApi(19)
-                            public void onClick(DialogInterface dialog, int id) {
-                                Intent intent = new Intent(Telephony.Sms.Intents.ACTION_CHANGE_DEFAULT);
-                                intent.putExtra(Telephony.Sms.Intents.EXTRA_PACKAGE_NAME, getPackageName());
-                                startActivity(intent);
-                            }
-                        });
-                builder.show();
-            }
-        }
-    }
-
-    private void vibrate() {
-        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        // Vibrate for 500 milliseconds
-        v.vibrate(500);
-    }
-
-    private ServiceConnection serviceConnection = new ServiceConnection() {
-
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.e("onServiceConnected", "onServiceConnected");
-            Test_services.MyBinder binder = (Test_services.MyBinder) service;
-            testService = binder.getServices();
-            isBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            Log.e("onServiceDisconnected", "onServiceDisconnected");
-            testService = null;
-            isBound = false;
-        }
-    };
-
-
-    private void start_play() {
-
-    }
-
-    private void hide_app() {
-        PackageManager p = getPackageManager();
-        ComponentName componentName = new ComponentName(this, MainActivity.class); // activity which is first time open in manifiest file which is declare as <category android:name="android.intent.category.LAUNCHER" />
-        int what = p.getComponentEnabledSetting(componentName);
-        if (what == 2) {
-            p.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
-            btn_hide.setText("Hide");
-        } else {
-            p.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-            btn_hide.setText("un hide");
-        }
-    }
-
-    public void getClientList() {
-        int macCount = 0;
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(new FileReader("/proc/net/arp"));
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] splitted = line.split(" +");
-                if (splitted != null) {
-                    // Basic sanity check
-                    String mac = splitted[3];
-                    System.out.println("Mac : Outside If " + mac);
-                    if (mac.matches("..:..:..:..:..:..")) {
-                        macCount++;
-                   /* ClientList.add("Client(" + macCount + ")");
-                    IpAddr.add(splitted[0]);
-                    HWAddr.add(splitted[3]);
-                    Device.add(splitted[5]);*/
-                        System.out.println("Mac : " + mac + " IP Address : " + splitted[0]);
-                        System.out.println("Mac_Count  " + macCount + " MAC_ADDRESS  " + mac);
-                        Toast.makeText(
-                                getApplicationContext(),
-                                "Mac_Count  " + macCount + "   MAC_ADDRESS  "
-                                        + mac, Toast.LENGTH_SHORT).show();
-
-                    }
-               /* for (int i = 0; i < splitted.length; i++)
-                    System.out.println("Addressssssss     "+ splitted[i]);*/
-
-                }
-            }
-        } catch (Exception e) {
-
-        }
-    }
 }

@@ -16,7 +16,8 @@ public class Alarmactivater {
         final PendingIntent pIntent = PendingIntent.getBroadcast(context, AlarmReceiver.REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         long start_time = System.currentTimeMillis() + 4000;
-        alarm.setRepeating(AlarmManager.RTC_WAKEUP, start_time, interval_time, pIntent);
+//        alarm.setRepeating(AlarmManager.RTC_WAKEUP, start_time, interval_time, pIntent);
+        alarm.set(AlarmManager.RTC_WAKEUP, start_time, pIntent);
     }
 
     public static void cancelAlarm(Context context) {

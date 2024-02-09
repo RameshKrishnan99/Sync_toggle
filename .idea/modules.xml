@@ -2,8 +2,15 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Sync_toggle.iml" filepath="$PROJECT_DIR$/Sync_toggle.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Sync_toggle.iml" filepath="$PROJECT_DIR$/.idea/modules/Sync_toggle.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Sync_toggle.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Sync_toggle.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Sync_toggle.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Sync_toggle.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Sync_toggle.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Sync_toggle.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Sync_toggle.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Sync_toggle.app.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/wifihotspot/Sync_toggle.wifihotspot.iml" filepath="$PROJECT_DIR$/.idea/modules/wifihotspot/Sync_toggle.wifihotspot.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/wifihotspot/Sync_toggle.wifihotspot.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/wifihotspot/Sync_toggle.wifihotspot.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/wifihotspot/Sync_toggle.wifihotspot.main.iml" filepath="$PROJECT_DIR$/.idea/modules/wifihotspot/Sync_toggle.wifihotspot.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/wifihotspot/Sync_toggle.wifihotspot.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/wifihotspot/Sync_toggle.wifihotspot.unitTest.iml" />
     </modules>
   </component>
 </project>

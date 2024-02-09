@@ -1,16 +1,16 @@
 package com.rk.sync_toggle;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.location.Address;
 import android.location.Geocoder;
@@ -21,24 +21,17 @@ import android.location.LocationProvider;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.net.wifi.WifiConfiguration;
-import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.telephony.SmsManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.security.Provider;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -310,14 +303,29 @@ public class Constants {
     public static final float GEOFENCE_RADIUS_IN_METERS = 20;
 
 
-    protected void switch_on_hotspot(boolean b) {
-        try {
-//            new WifiApManager(context).setWifiApState(new WifiConfiguration(), b);
-            new WifiApManager(context).setWifiApState(get_wificonfig(), b);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+    protected void switch_on_hotspot(boolean enable,Context context) {
+        if (enable) {
+            Intent intent = new Intent(context.getString(com.fitc.wifihotspot.R.string.intent_action_turnon));
+            sendImplicitBroadcast(context, intent);
+        } else {
+            Intent intent = new Intent(context.getString(com.fitc.wifihotspot.R.string.intent_action_turnoff));
+            sendImplicitBroadcast(context, intent);
         }
-//                wifiConfig();
+    }
+
+    public static void sendImplicitBroadcast(Context ctxt, Intent i) {
+        PackageManager pm=ctxt.getPackageManager();
+        List<ResolveInfo> matches=pm.queryBroadcastReceivers(i, 0);
+
+        for (ResolveInfo resolveInfo : matches) {
+            Intent explicit=new Intent(i);
+            ComponentName cn=
+                    new ComponentName(resolveInfo.activityInfo.applicationInfo.packageName,
+                            resolveInfo.activityInfo.name);
+
+            explicit.setComponent(cn);
+            ctxt.sendBroadcast(explicit);
+        }
     }
 
     private WifiConfiguration get_wificonfig() {
@@ -384,5 +392,9 @@ public class Constants {
     }
 
 
+    public boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
+        return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
+    }
 }

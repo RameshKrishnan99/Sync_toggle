@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "715186083354",
+    "project_id": "wifihotspot-8cbe2",
+    "storage_bucket": "wifihotspot-8cbe2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:715186083354:android:a42de48353fab6620923a3",
+        "android_client_info": {
+          "package_name": "com.rk.sync_toggle"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABQ5sS19NMbpqwLFx8nk9OxQ-MDRNuEzc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

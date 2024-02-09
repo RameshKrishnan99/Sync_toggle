@@ -26,17 +26,6 @@ public class AlarmReceiver extends BroadcastReceiver {
         Log.e("Receiver", "AlarmReceiver");
         this.context = context;
         sync_toggle();
-        set_Auto_brightness(context);
-//        String androidId = Settings.Secure.getString(context.getContentResolver(),Settings.Secure.ANDROID_ID);
-//        if (androidId.equals(my_phoneId)) {
-//        } else {
-//            create_sound();
-            /*if (is_hotspot_enabled()) {
-
-            } else {
-            }*/
-//        }
-
     }
 
     private void sync_toggle() {
@@ -54,11 +43,6 @@ public class AlarmReceiver extends BroadcastReceiver {
         }
     }
 
-    private void set_Auto_brightness(Context context) {
-        android.provider.Settings.System.putInt(context.getContentResolver(),
-                android.provider.Settings.System.SCREEN_BRIGHTNESS_MODE,
-                Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC);
-    }
 
     private boolean is_hotspot_enabled() {
        /*int AP_STATE_DISABLING = 10;

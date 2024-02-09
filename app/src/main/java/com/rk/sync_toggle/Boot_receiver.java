@@ -16,14 +16,8 @@ public class Boot_receiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        // TODO: This method is called when the BroadcastReceiver is receiving
-        // an Intent broadcast.
         Log.e("Boot_receiver", "started");
-//        ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
-//        toneGen1.startTone(ToneGenerator.TONE_CDMA_PIP, 500);
-//        context.startService(new Intent(context,Network_service.class));
         Alarmactivater.scheduleAlarm(context, Constants._interval_time);
         Log.e("Boot_receiver", "done");
-//        throw new UnsupportedOperationException("Not yet implemented");
     }
 }

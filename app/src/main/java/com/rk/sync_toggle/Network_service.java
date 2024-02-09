@@ -7,8 +7,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
-import android.support.v7.app.NotificationCompat;
+
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 import android.util.Log;
 
 public class Network_service extends Service {
